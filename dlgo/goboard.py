@@ -1,5 +1,6 @@
 import copy
 from dlgo.gotypes import Player
+from dlgo.gotypes import Point
 from dlgo import zobrist
 
 class Move:
@@ -190,6 +191,20 @@ class GameState:
             next_board = self.board
 
         return GameState(next_board, self.next_player.other, self, move)
+
+    def legal_moves(self):
+        moves = []
+        for row in range(1, self.board.num_rows + 1):
+            for col in range(1, self.board.num_cols + 1):
+                move = Move.play(Point(row, col))
+                if self.is_valid_move(move):
+                    moves.append(move)
+
+        moves.append(Move.pass_turn())
+        moves.append(Move.resign())
+
+        return moves
+
 
 
     @classmethod
