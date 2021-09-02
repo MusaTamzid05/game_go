@@ -8,4 +8,5 @@ class MCTSAgent(Agent):
         self.temparature = temparature
 
     def select_move(self, game_state):
-        pass
+        exit(1)
+
