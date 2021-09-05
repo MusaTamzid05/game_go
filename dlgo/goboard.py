@@ -2,6 +2,7 @@ import copy
 from dlgo.gotypes import Player
 from dlgo.gotypes import Point
 from dlgo import zobrist
+from dlgo.scoring import compute_game_result
 
 class Move:
 
@@ -271,3 +272,15 @@ class GameState:
                 not self.is_move_self_capture(self.next_player, move) and
                 not self.does_move_violate_ko(self.next_player, move)
                 )
+
+    def winner(self):
+        if not self.is_over():
+            return None
+
+        if self.last_move.is_resign:
+            return self.next_player
+
+        game_result = compute_game_result(self)
+        return game_result.winner
+
+
