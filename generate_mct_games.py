@@ -1,12 +1,33 @@
 import argparse
 from dlgo.encoders.base import get_encoder_by_name
 from dlgo import goboard
+from dlgo import mcts
+from dlgo.utils import print_board
+from dlgo.utils import print_move
+
+import numpy as np
 
 def generate_game(board_size, rounds, max_moves, temperature):
     boards, moves = [], []
     encoder = get_encoder_by_name("oneplane", board_size)
     game = goboard.GameState.new_game(board_size)
-    print(game)
+    bot = mcts.MCTSAgent(num_rounds = rounds, temperature = temperature)
+
+    num_moves = 0
+
+    while not game.is_over():
+        print_board(game.board)
+        move = bot.select_move(game)
+
+        if move.is_play:
+            boards.append(encoder.encode(game))
+            move_one_hot = np.zeros(encoder.num_points())
+            move_one_hot[encoder.encode_point(move.point)] = 1
+            moves.append(move_one_hot)
+
+        print_move(game.next_player, move)
+        num_moves += 1
+        game = game.apply_move(move)
 
     return 1, 2
 
@@ -27,6 +48,8 @@ def main():
     for i in range(args.num_games):
         print(f"Generating game {i + 1}/{args.num_games}")
         x, y = generate_game(args.board_size, args.rounds, args.max_moves, args.temperature)
+
+    print("total move generation complete")
 
 
 

@@ -51,10 +51,10 @@ class MCTSNode:
 
 
 class MCTSAgent(Agent):
-    def __init__(self, num_rounds, temparature):
+    def __init__(self, num_rounds, temperature):
         Agent.__init__(self)
         self.num_rounds = num_rounds
-        self.temparature = temparature
+        self.temperature = temperature
 
     def select_move(self, game_state):
         root = MCTSNode(game_state)
@@ -107,7 +107,7 @@ class MCTSAgent(Agent):
         for child in node.children:
             win_percentage = child.winning_frac(node.game_state.next_player)
             exploration_factor = math.sqrt(log_rollouts / child.num_rollouts)
-            uct_score = win_percentage * self.temparature * exploration_factor
+            uct_score = win_percentage * self.temperature * exploration_factor
 
             if uct_score > best_score:
                 best_score= uct_score
