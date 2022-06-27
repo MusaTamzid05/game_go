@@ -8,8 +8,12 @@ from dlgo.goboard import Board
 from dlgo.goboard import Move
 
 
+
 from dlgo.gotypes import Player
 from dlgo.gotypes import Point
+
+
+from dlgo.data.generator import DataGenerator
 
 import numpy as np
 
@@ -32,11 +36,11 @@ class GoDataProcessor:
     def __init__(
             self,
             encoder = "simple",
-            data_directoty = "data"
+            data_directory = "data"
             ):
         self.encoder_string = encoder
         self.encoder = get_encoder_by_name(encoder, 19)
-        self.data_dir = data_directoty
+        self.data_dir = data_directory
 
     def load_go_data(
             self,
@@ -50,32 +54,18 @@ class GoDataProcessor:
         sampler = Sampler(data_dir = self.data_dir)
         data = sampler.draw_data(data_type, num_samples)
 
-        zip_names = set()
-        indices_by_zip_name = {}
+        generator = DataGenerator(self.data_dir, data)
+        return generator
 
-        for filename, index in data:
-            zip_names.add(filename)
-
-            if filename not in indices_by_zip_name:
-                indices_by_zip_name[filename] = []
-            indices_by_zip_name[filename].append(index)
-
-
-        for zip_name in zip_names:
-            base_name = zip_name.replace(".tar.gz", "")
-            data_file_name = base_name + data_type
-
-            if not os.path.isfile(self.data_dir + "/" + data_file_name):
-                self.process_zip(
-                    zip_name,
-                    data_file_name,
-                    indices_by_zip_name[zip_name]
-                    )
+        '''
+        We are just loading the numpy files
+        which are in the data_prcoessed folder
+        Not doing any downloding shit!!
+        Please read the parallel_processor
+        for that part
+        '''
 
 
-
-
-        self.map_to_workers(data_type, data)
 
     def map_to_workers(self, data_type, samples):
         zip_names = set()
@@ -258,43 +248,6 @@ class GoDataProcessor:
 
 
         print(file_names)
-
-
-
-
-class CustomDataProcessor(GoDataProcessor):
-    def load_sgf(self, path):
-        sgf = None
-
-        with open(path, "r") as f:
-            text = f.read()
-            sgf = Sgf_game.from_string(text)
-
-        game_state, first_move_done = self.get_handicap(sgf = sgf)
-        print(first_move_done)
-
-        for item in sgf.main_sequence_iter():
-            color, move_tuple = item.get_move()
-            point = None
-
-            if color is not None:
-                if move_tuple is not None:
-                    row, col = move_tuple
-                    point = Point(row + 1, col + 1)
-                    move = Move.play(point)
-                else:
-                    move = Move.pass_turn()
-
-                if first_move_done and point is not None:
-                    features = self.encoder.encode(game_state)
-                    labels = self.encoder.encode_point(point)
-
-                    print(features.shape)
-
-                game_state = game_state.apply_move(move)
-                first_move_done = True
-
-
 
 
 
