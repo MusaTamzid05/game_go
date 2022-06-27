@@ -31,12 +31,11 @@ class SimpleEncoder(Encoder):
                                 Move.play(point)
                             ):
                         board_tensor[10][r][c] = 1
-                    else:
-                        liberty_plane = min(4, go_string.num_liberties) - 1
-
-                        if go_string.color == Player.white:
-                            liberty_plane += 4
-                        board_tensor[liberty_plane] += 4
+                else:
+                    liberty_plane = min(4, go_string.num_liberties) - 1
+                    if go_string.color == Player.white:
+                        liberty_plane += 4
+                    board_tensor[liberty_plane][r][c] = 1
 
 
         return board_tensor

@@ -67,13 +67,17 @@ class KGSIndex:
             filename = os.path.basename(url)
             split_file_name = filename.split("-")
             num_games = int(split_file_name[len(split_file_name) - 2])
-            print(f"{filename} {num_games}")
             self.file_info.append({"url" : url, "filename" : filename, "num_games" : num_games})
 
 
     def download_files(self):
         if not os.path.isdir(self.data_directory):
             os.makedirs(self.data_directory)
+        else:
+            if len(os.listdir(self.data_directory)) > 0:
+                print(f"[*] There are data already downloaded in {self.data_directory}")
+                return
+
 
         urls_to_download = []
 
