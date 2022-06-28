@@ -54,7 +54,8 @@ class GoDataProcessor:
         data = sampler.draw_data(data_type, num_samples)
 
         # the unzip part removed, we load data from
-        # predefine folder
+        # predefine folder. PS i dont know
+        # how we got the data in data_prcoessed
 
         generator = DataGenerator(self.data_dir, data)
         return generator
