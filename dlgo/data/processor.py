@@ -45,8 +45,7 @@ class GoDataProcessor:
     def load_go_data(
             self,
             data_type = "train",
-            num_samples = 1000,
-            use_generator = False
+            num_samples = 1000
             ):
         index = KGSIndex(data_directory = self.data_dir)
         index.download_files()
@@ -54,16 +53,12 @@ class GoDataProcessor:
         sampler = Sampler(data_dir = self.data_dir)
         data = sampler.draw_data(data_type, num_samples)
 
+        # the unzip part removed, we load data from
+        # predefine folder
+
         generator = DataGenerator(self.data_dir, data)
         return generator
 
-        '''
-        We are just loading the numpy files
-        which are in the data_prcoessed folder
-        Not doing any downloding shit!!
-        Please read the parallel_processor
-        for that part
-        '''
 
 
 

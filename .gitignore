@@ -4,3 +4,4 @@ __pycache__
 *.gz
 *.html
 *.tar
+*.h5
